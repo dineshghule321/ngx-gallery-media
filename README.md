@@ -3,6 +3,18 @@
 Angular picture and video gallery published to npm as `ngx-gallery-media`, with a demo app of every variant.
 Package readme: [projects/ngx-gallery-media/README.md](projects/ngx-gallery-media/README.md).
 
+## Where it lives
+
+| What               | Where                                               |
+| ------------------ | --------------------------------------------------- |
+| Package on npm     | https://www.npmjs.com/package/ngx-gallery-media     |
+| Source (this repo) | https://github.com/dineshghule321/ngx-gallery-media |
+| How to release     | [docs/RELEASING.md](docs/RELEASING.md)              |
+
+Every change to the package is made here and reaches apps only as a new npm version. Apps never patch or copy the
+package code; they keep a thin wrapper and move to the new version with
+`npm install ngx-gallery-media@<version> --save-exact`.
+
 ## Layout
 
 | Path                         | What                                                                           |
@@ -13,6 +25,7 @@ Package readme: [projects/ngx-gallery-media/README.md](projects/ngx-gallery-medi
 | `docs/RELEASING.md`          | Step by step: setup, first release, every release, fixing npm errors.          |
 | `docs/CODE-MANAGEMENT.md`    | Branches, versions, releases, publishing, updating the apps.                   |
 | `CHANGELOG.md`               | Changes per version.                                                           |
+| `AGENTS.md`                  | Rules for coding agents and contributors.                                      |
 
 ## Commands
 
