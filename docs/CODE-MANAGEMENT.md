@@ -45,7 +45,7 @@ Angular support: each major of the package states its Angular range in `peerDepe
 
 ## Releasing
 
-`npm run release:prepare -- patch|minor|major` sets the version and dates the `## Unreleased` changelog entries; a
+`npm run version:patch` (or `version:minor`, `version:major`) sets the version and dates the `## Unreleased` changelog entries; a
 `v<version>` tag publishes through the `Release` workflow (npm trusted publishing, no token). Details and troubleshooting: [RELEASING.md](RELEASING.md).
 
 ## Working on the library and an app together

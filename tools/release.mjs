@@ -1,5 +1,5 @@
 // Prepares a release: sets the library version and turns "## Unreleased" in CHANGELOG.md into the version heading.
-// Usage: npm run release:prepare -- patch | minor | major | 1.2.3
+// Usage: npm run version:patch | version:minor | version:major, or npm run release:prepare -- 1.2.3
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const PKG = 'projects/ngx-gallery-media/package.json';
@@ -33,10 +33,14 @@ const today = new Date().toISOString().slice(0, 10);
 writeFileSync(LOG, log.replace(/^## Unreleased\s*$/m, `## ${next} (${today})`));
 pkg.version = next;
 writeFileSync(PKG, `${JSON.stringify(pkg, null, 2)}\n`);
+// The workspace version follows the library, so `npm run` shows the version being worked on.
+const root = JSON.parse(readFileSync('package.json', 'utf8'));
+root.version = next;
+writeFileSync('package.json', `${JSON.stringify(root, null, 2)}\n`);
 
 console.log(`Version ${next} prepared. Next:
   npm run check
-  git add ${PKG} ${LOG}
+  git add package.json ${PKG} ${LOG}
   git commit -m "chore(release): ${next}"
   git tag v${next}
   git push origin main v${next}`);

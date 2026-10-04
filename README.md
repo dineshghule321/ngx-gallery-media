@@ -18,16 +18,17 @@ Package readme: [projects/ngx-gallery-media/README.md](projects/ngx-gallery-medi
 
 Node 22.17 (`.nvmrc`).
 
-| Command                            | Does                                                                                |
-| ---------------------------------- | ----------------------------------------------------------------------------------- |
-| `npm ci`                           | Install.                                                                            |
-| `npm start`                        | Demo at http://localhost:4300, reloading on library changes.                        |
-| `npm test`                         | Library tests in watch mode.                                                        |
-| `npm run check`                    | Lint, format check, library and demo tests, library and demo builds (what CI runs). |
-| `npm run build`                    | Library to `dist/ngx-gallery-media`.                                                |
-| `npm run pack`                     | Library build plus `npm pack` (a `.tgz` to try in an app).                          |
-| `npm run format`                   | Prettier on the sources and docs.                                                   |
-| `npm run release:prepare -- patch` | Next version and changelog heading (see docs/RELEASING.md).                         |
+| Command                 | Does                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `npm ci`                | Install.                                                                            |
+| `npm start`             | Demo at http://localhost:4300, reloading on library changes.                        |
+| `npm test`              | Library tests in watch mode.                                                        |
+| `npm run check`         | Lint, format check, library and demo tests, library and demo builds (what CI runs). |
+| `npm run build`         | Library to `dist/ngx-gallery-media`.                                                |
+| `npm run pack`          | Library build plus `npm pack` (a `.tgz` to try in an app).                          |
+| `npm run format`        | Prettier on the sources and docs.                                                   |
+| `npm run version:patch` | Next version (also `version:minor`, `version:major`) and changelog heading.         |
+| `npm run release`       | Publish from your computer: login check, full check, `npm publish`.                 |
 
 Tests need Chrome or Chromium; set `CHROME_BIN` when it is not found (the `ChromeHeadlessCI` launcher runs without
 the sandbox, for containers).

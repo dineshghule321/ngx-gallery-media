@@ -3,7 +3,7 @@
 Public package on npmjs.com: `ngx-gallery-media`. Follow the part that matches what you are doing:
 
 - [A. One-time setup](#a-one-time-setup) (once)
-- [B. First release: 1.0.0](#b-first-release-100) (once)
+- [B. First release: 1.0.0](#b-first-release-100) (once, step by step)
 - [C. Every next release: 1.0.1, 1.1.0, 2.0.0](#c-every-next-release)
 - [D. Updating the apps](#d-updating-the-apps)
 - [E. Something went wrong](#e-something-went-wrong)
@@ -43,47 +43,95 @@ GitHub Actions with **npm trusted publishing**: npm checks that the publish come
 
 ## B. First release: 1.0.0
 
-Publish the delivered file `ngx-gallery-media-1.0.0.tgz` exactly as it is. Apps that already pin 1.0.0 in their
-lockfiles expect this file's checksum, so `npm ci` in those apps only works with these exact bytes. Do not rebuild
-it.
+Done once, from your computer, in Git Bash. The apps already pin 1.0.0 with the checksum
+`sha512-buaanWh88Uafm8j/lrjngyQoZ7oG1jlEyiZBe0vhxnuNsIY2/EUCfcm/4lUv3N3b8adbmroEdthkK6kEZdBHnQ==`; the build of
+this repository at 1.0.0 gives exactly that file, so `npm ci` in the apps works afterwards.
 
-```bash
-# 1. Check the file is the delivered one (both lines must match)
-node -e "const c=require('crypto'),f=require('fs');console.log('sha512-'+c.createHash('sha512').update(f.readFileSync('ngx-gallery-media-1.0.0.tgz')).digest('base64'))"
-#    sha512-buaanWh88Uafm8j/lrjngyQoZ7oG1jlEyiZBe0vhxnuNsIY2/EUCfcm/4lUv3N3b8adbmroEdthkK6kEZdBHnQ==
+1. Go to the repository and make sure it is clean and up to date:
 
-# 2. Sign in (browser opens; 2-hour session) and check who you are
-npm login
-npm whoami
+   ```bash
+   cd "<your projects folder>/ngx-gallery-media"
+   git status            # must say "nothing to commit, working tree clean"
+   git pull
+   ```
 
-# 3. Publish the file (asks for your 2FA code or security key)
-npm publish ngx-gallery-media-1.0.0.tgz --access public
+2. Install, and check that the version is 1.0.0:
 
-# 4. Check what npm holds
-npm view ngx-gallery-media version dist.integrity
-#    1.0.0
-#    sha512-buaanWh88Uafm8j/lrjngyQoZ7oG1jlEyiZBe0vhxnuNsIY2/EUCfcm/4lUv3N3b8adbmroEdthkK6kEZdBHnQ==
-```
+   ```bash
+   npm ci
+   node -p "require('./projects/ngx-gallery-media/package.json').version"    # 1.0.0
+   ```
 
-Then mark the release in the repository (the `Release` workflow sees 1.0.0 is already on npm and does not publish
-again), and do A.5:
+3. Run the full check and build (lint, format, tests, library and demo builds; about 2 minutes):
 
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+   ```bash
+   npm run check
+   ```
 
-Then the apps: their `npm ci` now downloads 1.0.0 from npm.
+4. Check the package before publishing. The last lines must show `version: 1.0.0` and
+   `integrity: sha512-buaanWh88Uafm[...]thkK6kEZdBHnQ==`:
+
+   ```bash
+   cd dist/ngx-gallery-media
+   npm pack --dry-run
+   ```
+
+   A different integrity means the source is not the 1.0.0 the apps expect: stop, and publish the delivered file
+   instead (step 4b).
+
+5. Sign in to npm (a browser opens; the session lasts 2 hours) and check the account:
+
+   ```bash
+   npm login
+   npm whoami            # your npm user name
+   ```
+
+6. Publish (asks for your 2FA code or security key), still in `dist/ngx-gallery-media`:
+
+   ```bash
+   npm publish --access public
+   cd ../..
+   ```
+
+   4b. Instead of steps 3, 4 and 6, the delivered file can be published as it is:
+
+   ```bash
+   cd "<folder with the delivered file>"
+   npm publish ngx-gallery-media-1.0.0.tgz --access public
+   ```
+
+7. Check what npm holds (version 1.0.0 and the same integrity):
+
+   ```bash
+   npm view ngx-gallery-media version dist.integrity
+   ```
+
+   The page https://www.npmjs.com/package/ngx-gallery-media shows the package a few minutes later.
+
+8. Mark the release in Git (the `Release` workflow sees that 1.0.0 is already on npm and does not publish again):
+
+   ```bash
+   cd "<your projects folder>/ngx-gallery-media"
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+9. Set the trusted publisher on npmjs.com (A.5), so 1.0.1 and later publish from GitHub.
+
+10. Install it in the apps: apply their UI batch that adds `ngx-gallery-media` 1.0.0, then `npm ci` in each app.
+
+If a step fails, see E (most likely: `ENEEDAUTH` = not logged in, step 5; `E403 ... previously published` = 1.0.0
+is already on npm, go on with step 7).
 
 ## C. Every next release
 
 Which number:
 
-| What changed                                                       | Run                                | Example        |
-| ------------------------------------------------------------------ | ---------------------------------- | -------------- |
-| Bug fix, docs, inside change; nobody's code has to change          | `npm run release:prepare -- patch` | 1.0.0 to 1.0.1 |
-| New option, label, CSS variable or event; old use still works      | `npm run release:prepare -- minor` | 1.0.1 to 1.1.0 |
-| Renamed or removed option, changed default, new Angular major only | `npm run release:prepare -- major` | 1.1.0 to 2.0.0 |
+| What changed                                                       | Run                     | Example        |
+| ------------------------------------------------------------------ | ----------------------- | -------------- |
+| Bug fix, docs, inside change; nobody's code has to change          | `npm run version:patch` | 1.0.0 to 1.0.1 |
+| New option, label, CSS variable or event; old use still works      | `npm run version:minor` | 1.0.1 to 1.1.0 |
+| Renamed or removed option, changed default, new Angular major only | `npm run version:major` | 1.1.0 to 2.0.0 |
 
 Steps:
 
@@ -101,17 +149,18 @@ Steps:
 
    ```bash
    git checkout main && git pull
-   npm run release:prepare -- patch      # or minor / major
+   npm run version:patch      # or version:minor / version:major
    ```
 
-   It sets the version in `projects/ngx-gallery-media/package.json`, renames `## Unreleased` to
-   `## 1.0.1 (date)`, and stops with a message if something is missing (no changelog entry, version not newer).
+   It sets the version in `package.json` and `projects/ngx-gallery-media/package.json`, renames `## Unreleased` to
+   `## 1.0.1 (date)`, prints the next commands, and stops with a message if something is missing (no changelog
+   entry, version not newer).
 
 4. Run the commands it prints:
 
    ```bash
    npm run check
-   git add projects/ngx-gallery-media/package.json CHANGELOG.md
+   git add package.json projects/ngx-gallery-media/package.json CHANGELOG.md
    git commit -m "chore(release): 1.0.1"
    git tag v1.0.1
    git push origin main v1.0.1
@@ -125,13 +174,11 @@ Steps:
 If GitHub Actions is not available, publish from your computer after step 4 (2FA asked):
 
 ```bash
-npm login
-npm run build
-cd dist/ngx-gallery-media && npm publish --access public
+npm login          # once per 2 hours; without it npm answers ENEEDAUTH
+npm run release    # checks you are logged in, runs the full check, publishes dist/ngx-gallery-media
 ```
 
-Pre-releases, to try a version in the apps before everyone gets it: `npm run release:prepare -- 1.1.0-rc.1`
-is refused (only x.y.z), so set `"version": "1.1.0-rc.1"` in `projects/ngx-gallery-media/package.json` by hand,
+Pre-releases, to try a version in the apps before everyone gets it: the version commands take only x.y.z, so set `"version": "1.1.0-rc.1"` in `projects/ngx-gallery-media/package.json` by hand,
 commit, tag `v1.1.0-rc.1` and push the tag. The workflow publishes it under the `next` tag:
 `npm install ngx-gallery-media` keeps giving the last normal version, `npm install ngx-gallery-media@next` gives the
 pre-release.
@@ -155,11 +202,12 @@ changelog first; the steps for your code are listed there.
 | Message or problem                                                                      | Cause                                                                                                       | Fix                                                                                                                                                                                          |
 | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `E403 ... You do not have permission to publish` (your computer)                        | Not signed in, wrong account, or the name is taken                                                          | `npm whoami`; `npm login` with the owner account; `npm view ngx-gallery-media` to see the owner.                                                                                             |
+| `ENEEDAUTH` / "need auth ... You need to authorize this machine" (your computer)        | Not logged in to npm on this computer (sessions last 2 hours)                                               | `npm login`, then run the command again. `npm run release` checks this first.                                                                                                                |
 | `EOTP` or "requires two-factor authentication" (your computer)                          | 2FA code needed                                                                                             | Run again and enter the code, or `npm publish --otp 123456`.                                                                                                                                 |
 | `Release` workflow: `E404 Not Found - PUT https://registry.npmjs.org/ngx-gallery-media` | Trusted publisher not set, or set with another user, repository or workflow name (npm answers 404, not 403) | Check A.5 letter by letter: GitHub user or organisation, repository `ngx-gallery-media`, workflow `release.yml`. Then re-run the failed job.                                                 |
 | `Release` workflow: `ENEEDAUTH` or "need auth"                                          | npm older than 11.5.1, or `id-token: write` missing                                                         | The workflow installs npm 11 and sets `id-token: write`; if someone edited it, restore both.                                                                                                 |
-| `E403 ... cannot publish over the previously published versions`                        | That version is already on npm                                                                              | Versions are permanent: prepare the next patch (`release:prepare -- patch`).                                                                                                                 |
-| Workflow: `Tag v1.0.2 does not match package version 1.0.1`                             | Tagged without running `release:prepare`, or wrong tag                                                      | `git push --delete origin v1.0.2 && git tag -d v1.0.2`; prepare the version; tag again.                                                                                                      |
+| `E403 ... cannot publish over the previously published versions`                        | That version is already on npm                                                                              | Versions are permanent: prepare the next patch (`npm run version:patch`).                                                                                                                    |
+| Workflow: `Tag v1.0.2 does not match package version 1.0.1`                             | Tagged without running `npm run version:patch` (or minor / major), or wrong tag                             | `git push --delete origin v1.0.2 && git tag -d v1.0.2`; prepare the version; tag again.                                                                                                      |
 | Workflow: `already on npm; nothing to publish`                                          | The tag points at a version already published                                                               | Nothing to do; this is how v1.0.0 behaves after B.                                                                                                                                           |
 | Workflow does not start on a tag                                                        | Tag pushed before the workflow file was on GitHub, or Actions turned off                                    | Settings > Actions: allow; push the tag again (delete it first as above).                                                                                                                    |
 | `CI` fails only on GitHub                                                               | Something your computer has and the runner has not                                                          | Open the failed step; run `npm ci && npm run check` locally on a clean clone.                                                                                                                |
