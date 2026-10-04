@@ -1,0 +1,81 @@
+/*
+ * The demo defines the Bootstrap 5 variables the gallery reads, so it looks as it will in the apps without
+ * loading Bootstrap: a blue (#1565c0) and an orange (#ff5900) primary colour, light and dark.
+ */
+:root {
+  --bs-primary: #1565c0;
+  --bs-body-bg: #fff;
+  --bs-body-color: #212529;
+  --bs-secondary-color: rgba(33, 37, 41, 0.75);
+  --bs-tertiary-bg: #f3f5f8;
+  --bs-border-color: #dee2e6;
+  --bs-border-radius: 0.375rem;
+  color-scheme: light;
+}
+
+:root[data-theme='orange'] {
+  --bs-primary: #ff5900;
+}
+
+:root[data-bs-theme='dark'] {
+  --bs-body-bg: #212529;
+  --bs-body-color: #dee2e6;
+  --bs-secondary-color: rgba(222, 226, 230, 0.75);
+  --bs-tertiary-bg: #2b3035;
+  --bs-border-color: #495057;
+  color-scheme: dark;
+}
+
+:root[data-bs-theme='dark'][data-theme='blue'] {
+  --bs-primary: #4f8fdc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Noto Sans JP',
+    sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* "Custom icons" example: a tiny icon font stand-in made of characters. */
+.demo-icon {
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+}
+.demo-icon-prev::before {
+  content: '\2190';
+}
+.demo-icon-next::before {
+  content: '\2192';
+}
+.demo-icon-close::before {
+  content: '\00d7';
+}
+.demo-icon-full::before {
+  content: '\2922';
+}
+.demo-icon-heart::before {
+  content: '\2665';
+}

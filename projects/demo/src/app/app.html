@@ -1,0 +1,146 @@
+<header class="top">
+  <button
+    type="button"
+    class="menu-toggle"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="menu"
+    (click)="menuOpen.set(!menuOpen())"
+  >
+    Menu
+  </button>
+  <h1>ngx-gallery-media</h1>
+  <div class="controls">
+    <label>
+      Theme
+      <select [value]="theme()" (change)="theme.set($any($event.target).value)">
+        <option value="blue">Blue</option>
+        <option value="orange">Orange</option>
+      </select>
+    </label>
+    <label>
+      Language
+      <select [value]="lang()" (change)="lang.set($any($event.target).value)">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+    </label>
+    <label class="check">
+      <input type="checkbox" [checked]="dark()" (change)="dark.set($any($event.target).checked)" />
+      Dark
+    </label>
+  </div>
+</header>
+
+<div class="layout">
+  <nav id="menu" class="menu" [class.open]="menuOpen()" aria-label="Examples">
+    @for (g of groups; track g) {
+      <h2>{{ g }}</h2>
+      <ul>
+        @for (e of byGroup(g); track e.id) {
+          <li
+            ><a [href]="'#' + e.id" (click)="menuOpen.set(false)">{{ e.title }}</a></li
+          >
+        }
+      </ul>
+    }
+  </nav>
+
+  <main>
+    <section class="intro">
+      <p>
+        Picture and video gallery for Angular: the options and examples of
+        <a href="https://github.com/lukasz-galka/ngx-gallery" target="_blank" rel="noopener">ngx-gallery</a>, plus
+        videos, signed URLs, translations, a preview service and theming through CSS variables. Switch the theme, dark
+        mode and language above; every example follows.
+      </p>
+      @if (log().length) {
+        <ul class="log" aria-live="polite">
+          @for (l of log(); track $index) {
+            <li>{{ l }}</li>
+          }
+        </ul>
+      }
+    </section>
+
+    @for (g of groups; track g) {
+      <h2 class="group">{{ g }}</h2>
+      @for (e of byGroup(g); track e.id) {
+        <section class="card" [id]="e.id" [attr.aria-labelledby]="e.id + '-title'">
+          <h3 [id]="e.id + '-title'">{{ e.title }}</h3>
+          <p class="text">{{ e.text }}</p>
+
+          @switch (e.kind) {
+            @case ('buttons') {
+              <ngm-gallery #bg [images]="e.images" [options]="e.options" [labels]="labels()" />
+              <div class="buttons">
+                <button type="button" (click)="bg.showPrev()" [disabled]="!bg.canShowPrev()">Previous</button>
+                <button type="button" (click)="bg.showNext()" [disabled]="!bg.canShowNext()">Next</button>
+              </div>
+            }
+            @case ('only-preview') {
+              <ngm-gallery #pg [images]="e.images" [options]="e.options" [labels]="labels()" />
+              <div class="buttons">
+                <button type="button" (click)="pg.openPreview(0)">Open the preview</button>
+              </div>
+            }
+            @case ('dynamic') {
+              <ngm-gallery [images]="dynamicImages()" [options]="e.options" [labels]="labels()" />
+              <div class="buttons">
+                <button type="button" (click)="changeImages()">Change</button>
+                <button type="button" (click)="addImage()">Add</button>
+                <button type="button" (click)="removeImage()" [disabled]="!dynamicImages().length">Remove</button>
+              </div>
+            }
+            @case ('async') {
+              @if (asyncImages(); as list) {
+                <ngm-gallery
+                  [images]="list"
+                  [options]="e.options"
+                  [labels]="labels()"
+                  (imagesReady)="note('async images ready')"
+                />
+              } @else {
+                <div class="loading" role="status">Loading pictures…</div>
+              }
+              <div class="buttons">
+                <button type="button" (click)="loadAsync()">Load again</button>
+              </div>
+            }
+            @case ('resolver') {
+              <ngm-gallery [images]="e.images" [options]="e.options" [labels]="labels()" [resolver]="resolver" />
+            }
+            @case ('service') {
+              <div class="tiles">
+                @for (m of e.images.slice(0, 4); track $index) {
+                  <button
+                    type="button"
+                    class="tile"
+                    (click)="enlarge(e.images, $index)"
+                    [attr.aria-label]="'Enlarge ' + m.label"
+                  >
+                    <img [src]="m.small" alt="" />
+                  </button>
+                }
+              </div>
+            }
+            @default {
+              <ngm-gallery
+                [images]="e.images"
+                [options]="e.options"
+                [labels]="labels()"
+                (change)="note(e.title + ': item ' + ($event.index + 1))"
+                (previewOpen)="note(e.title + ': preview opened')"
+              />
+            }
+          }
+
+          <details>
+            <summary>Code</summary>
+            <button type="button" class="copy" (click)="copy(e.code ?? '')">Copy</button>
+            <pre><code>{{ e.code }}</code></pre>
+          </details>
+        </section>
+      }
+    }
+  </main>
+</div>
