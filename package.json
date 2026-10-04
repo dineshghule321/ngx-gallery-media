@@ -1,0 +1,50 @@
+{
+  "name": "ngx-gallery-media",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve demo --port 4300",
+    "build": "ng build ngx-gallery-media --configuration production && node tools/package-files.mjs",
+    "build:demo": "ng build demo --configuration production",
+    "watch": "ng build ngx-gallery-media --watch --configuration development",
+    "test": "ng test ngx-gallery-media",
+    "test:ci": "ng test ngx-gallery-media --watch=false --browsers=ChromeHeadlessCI && ng test demo --watch=false --browsers=ChromeHeadlessCI",
+    "lint": "ng lint",
+    "format": "prettier --write \"projects/**/*.{ts,html,scss,json}\" \"*.md\" \"docs/**/*.md\"",
+    "format:check": "prettier --check \"projects/**/*.{ts,html,scss,json}\" \"*.md\" \"docs/**/*.md\"",
+    "check": "npm run lint && npm run format:check && npm run test:ci && npm run build && npm run build:demo",
+    "pack": "npm run build && cd dist/ngx-gallery-media && npm pack",
+    "release": "npm run check && cd dist/ngx-gallery-media && npm publish --access public",
+    "release:prepare": "node tools/release.mjs"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.37",
+    "@angular/cli": "^20.3.37",
+    "@angular/compiler-cli": "^20.3.0",
+    "@types/jasmine": "~5.1.0",
+    "angular-eslint": "20.7.0",
+    "eslint": "^9.39.1",
+    "jasmine-core": "~5.9.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^20.3.0",
+    "prettier": "^3.9.9",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "8.46.4"
+  }
+}
