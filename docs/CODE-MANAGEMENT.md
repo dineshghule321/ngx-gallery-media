@@ -23,7 +23,8 @@ errors: [RELEASING.md](RELEASING.md).
 
 ## Branches and commits
 
-- `main` is always releasable; the pipeline runs the full check on every push and pull request.
+- The repository is private on GitHub; `main` is always releasable; the `CI` workflow runs the full check on every
+  push and pull request.
 - Work on `feat/...`, `fix/...` branches; merge by pull request after the check passes.
 - Conventional commits (`feat(gallery): ...`, `fix(preview): ...`, `docs: ...`), so the changelog writes itself
   and the next version is clear: `fix` = patch, `feat` = minor, `feat!` or `BREAKING CHANGE` = major.
@@ -45,7 +46,7 @@ Angular support: each major of the package states its Angular range in `peerDepe
 ## Releasing
 
 `npm run release:prepare -- patch|minor|major` sets the version and dates the `## Unreleased` changelog entries; a
-`v<version>` tag publishes through the pipeline. Details and troubleshooting: [RELEASING.md](RELEASING.md).
+`v<version>` tag publishes through the `Release` workflow (npm trusted publishing, no token). Details and troubleshooting: [RELEASING.md](RELEASING.md).
 
 ## Working on the library and an app together
 
