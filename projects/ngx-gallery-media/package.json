@@ -1,0 +1,26 @@
+{
+  "name": "ngx-gallery-media",
+  "version": "1.0.0",
+  "description": "Angular picture and video gallery with thumbnails and a full-window preview: the options of ngx-gallery plus videos, signed URLs, translations and theming through CSS variables.",
+  "keywords": [
+    "angular",
+    "gallery",
+    "image-gallery",
+    "video-gallery",
+    "lightbox",
+    "carousel",
+    "thumbnails",
+    "zoom",
+    "signals",
+    "standalone"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^20.0.0 || ^21.0.0",
+    "@angular/core": "^20.0.0 || ^21.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}
