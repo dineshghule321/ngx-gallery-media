@@ -1,0 +1,64 @@
+# Publishes to npm when a version tag (v1.2.3) is pushed, through npm trusted publishing: no npm token is stored
+# anywhere. One-time setup on npmjs.com: package Settings > Trusted publisher > GitHub Actions, this repository,
+# workflow file "release.yml" (docs/RELEASING.md, A.5).
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write # lets npm verify that this workflow publishes (trusted publishing)
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+      - name: Tag must match the package version
+        id: version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./dist/ngx-gallery-media/package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package version $PKG_VERSION"
+            exit 1
+          fi
+          echo "version=$PKG_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Skip a version already on npm
+        id: exists
+        run: |
+          if npm view "ngx-gallery-media@${{ steps.version.outputs.version }}" version >/dev/null 2>&1; then
+            echo "ngx-gallery-media@${{ steps.version.outputs.version }} is already on npm; nothing to publish."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: npm 11.5.1 or later (needed for trusted publishing)
+        if: steps.exists.outputs.published == 'false'
+        run: npm install -g npm@^11.5.1 && npm --version
+
+      - name: Publish
+        if: steps.exists.outputs.published == 'false'
+        working-directory: dist/ngx-gallery-media
+        run: |
+          case "${{ steps.version.outputs.version }}" in
+            *-*) npm publish --access public --tag next ;;
+            *) npm publish --access public ;;
+          esac
