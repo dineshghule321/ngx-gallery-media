@@ -3,6 +3,7 @@
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
 ## 1.0.1 (2026-10-29)
+
 - Fix: a picture that fails to load without an error text (thumbnails) no longer shows an image role with an
   empty name (axe role-img-alt); the state is hidden from assistive technology, the button keeps the name.
 - Development tools (Angular CLI and build, demo app) updated to the latest Angular 20 patch releases: `npm audit`

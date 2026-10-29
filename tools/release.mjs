@@ -30,7 +30,7 @@ const log = readFileSync(LOG, 'utf8');
 const match = log.match(/^## Unreleased\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/m);
 if (!match || !match[1].trim()) fail('add the changes under "## Unreleased" in CHANGELOG.md first');
 const today = new Date().toISOString().slice(0, 10);
-writeFileSync(LOG, log.replace(/^## Unreleased\s*$/m, `## ${next} (${today})`));
+writeFileSync(LOG, log.replace(/^## Unreleased[ \t]*$/m, `## ${next} (${today})`));
 pkg.version = next;
 writeFileSync(PKG, `${JSON.stringify(pkg, null, 2)}\n`);
 // The workspace version follows the library, so `npm run` shows the version being worked on.
