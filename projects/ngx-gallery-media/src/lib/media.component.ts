@@ -118,7 +118,13 @@ import { NgmUrlStore } from './url-store';
       }
     }
     @if (broken() || failed()) {
-      <div class="state" role="img" [attr.aria-label]="errorText()">
+      <!-- Without a text (thumbnails: their button carries the name) the broken state is decoration, not an unnamed image. -->
+      <div
+        class="state"
+        [attr.role]="errorText() ? 'img' : null"
+        [attr.aria-label]="errorText() || null"
+        [attr.aria-hidden]="errorText() ? null : 'true'"
+      >
         <ngm-icon name="broken" />
         @if (showErrorText()) {
           <p>{{ errorText() }}</p>
