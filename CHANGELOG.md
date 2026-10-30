@@ -2,6 +2,12 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
+## 1.1.0 (2026-10-30)
+
+- Angular 22 support: `@angular/core` and `@angular/common` peer range `^20.0.0 || ^21.0.0 || ^22.0.0`. The build
+  stays on Angular 20 (the lowest supported version), so the package code is unchanged; checked in an Angular 22
+  application (production build and unit tests).
+
 ## 1.0.1 (2026-10-29)
 
 - Fix: a picture that fails to load without an error text (thumbnails) no longer shows an image role with an
