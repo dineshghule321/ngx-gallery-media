@@ -41,7 +41,8 @@ inputs, outputs, options, labels, CSS variables, the preview service.
 | Renamed or removed option, changed default, new Angular major only | **x**.0.0 |
 
 Angular support: each major of the package states its Angular range in `peerDependencies`
-(1.x: Angular 20 and 21).
+(1.x: Angular 20, 21 and 22). The package is built with the lowest Angular it supports (20), so
+the compiled code runs on every version in the range.
 
 ## Releasing
 

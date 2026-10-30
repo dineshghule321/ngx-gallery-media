@@ -25,7 +25,7 @@ Contents:
 npm install ngx-gallery-media
 ```
 
-Angular 20 or 21. No other dependency, no global styles, no animations module, no HammerJS. The components are
+Angular 20, 21 or 22. No other dependency, no global styles, no animations module, no HammerJS. The components are
 standalone; import what you use:
 
 ```ts
