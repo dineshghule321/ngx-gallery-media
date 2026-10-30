@@ -14,7 +14,7 @@ Instructions for coding agents (and humans in a hurry). Repository overview: `RE
 ## What this is
 
 An Angular picture and video gallery (`<ngm-gallery>`, `NgmGalleryPreviewService`) with ngx-gallery option names,
-plus a demo app of every variant. Angular 20 and 21 standalone, signals, zoneless-safe, no runtime dependency
+plus a demo app of every variant. Angular 20, 21 and 22 standalone, signals, zoneless-safe, no runtime dependency
 besides Angular.
 
 ## Rules
