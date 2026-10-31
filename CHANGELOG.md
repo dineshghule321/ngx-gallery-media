@@ -2,6 +2,16 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Fix: the change animation of the stage (`imageAnimation`: fade, slide, rotate, zoom) never ran in an application.
+  Angular scopes the `@keyframes` names of a component, and the names were given through CSS variables, which it
+  does not rewrite. They are now named directly in `animation-name`. `--ngm-duration` works as documented.
+- Fix: after a move, the picture that was shown no longer stays visible behind the new one (seen beside a narrower
+  picture, for example portrait in a landscape stage with `imageSize: 'contain'`). It was never unmarked as
+  leaving. It is now hidden when its change animation ends (2 s fallback), at once with reduced motion, and is
+  visible only while an animation runs.
+
 ## 1.1.0 (2026-10-30)
 
 - Angular 22 support: `@angular/core` and `@angular/common` peer range `^20.0.0 || ^21.0.0 || ^22.0.0`. The build
