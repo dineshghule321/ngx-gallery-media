@@ -57,6 +57,51 @@ describe('NgmGalleryComponent', () => {
     expect(g.index()).toBe(0);
   });
 
+  it('hides the picture that was shown once its change animation ends', () => {
+    fixture.detectChanges();
+    gallery().showNext();
+    fixture.detectChanges();
+    const slides = () => Array.from(el().querySelectorAll<HTMLElement>('ngm-gallery-image .slide'));
+    const leaving = () => slides().filter((n) => n.classList.contains('leaving'));
+    expect(slides()[1].classList).toContain('active');
+    expect(leaving().length).toBe(1);
+    // The fade really runs on both slides (a keyframe name Angular did not scope would run nothing).
+    expect(slides()[0].getAnimations().length).toBe(1);
+    expect(slides()[1].getAnimations().length).toBe(1);
+    // An animation inside the slide (a spinner) does not end the change.
+    slides()[0]
+      .querySelector('ngm-media')
+      ?.dispatchEvent(new AnimationEvent('animationend', { bubbles: true }));
+    fixture.detectChanges();
+    expect(leaving().length).toBe(1);
+    slides()[0].dispatchEvent(new AnimationEvent('animationend', { bubbles: true }));
+    fixture.detectChanges();
+    expect(leaving().length).toBe(0);
+    expect(getComputedStyle(slides()[0]).visibility).toBe('hidden');
+    expect(getComputedStyle(slides()[1]).visibility).toBe('visible');
+  });
+
+  it('shows only the new picture at once with reduced motion (no picture left behind a narrower one)', () => {
+    spyOn(window, 'matchMedia').and.returnValue({ matches: true } as MediaQueryList);
+    fixture = TestBed.createComponent(HostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+    gallery().showNext();
+    fixture.detectChanges();
+    gallery().showNext();
+    fixture.detectChanges();
+    const slides = Array.from(el().querySelectorAll<HTMLElement>('ngm-gallery-image .slide'));
+    expect(el().querySelectorAll('ngm-gallery-image .slide.leaving').length).toBe(0);
+    expect(slides.map((n) => getComputedStyle(n).visibility)).toEqual([
+      'hidden',
+      'hidden',
+      'visible',
+      'hidden',
+      'hidden',
+      'hidden',
+    ]);
+  });
+
   it('emits change with the item', () => {
     fixture.detectChanges();
     const seen: number[] = [];

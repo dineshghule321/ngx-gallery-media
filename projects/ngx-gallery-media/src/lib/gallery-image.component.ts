@@ -16,6 +16,9 @@ import { NgmMediaComponent } from './media.component';
 import { NgmGalleryItem, NgmGalleryLabels, NgmResolvedOptions } from './models';
 import { NgmActionsComponent, NgmBulletsComponent } from './parts.component';
 
+/** Hides the leaving slide when its animation end is never reported (default animation: 0.45 s). */
+const LEAVE_FALLBACK_MS = 2000;
+
 /**
  * The stage: the current picture or video large, with arrows, swipe, auto play, the change animation, the
  * caption, bullets, a counter and custom actions. A click opens the preview (or the item link); a video plays in
@@ -60,33 +63,43 @@ import { NgmActionsComponent, NgmBulletsComponent } from './parts.component';
       visibility: hidden;
     }
     .slide.active,
-    .slide.leaving {
+    :host(.animate:not(.no-motion)) .slide.leaving {
       visibility: visible;
     }
     .slide.active {
       z-index: 1;
     }
-    :host(.animate) .slide.active {
-      animation: var(--ngm-in) var(--ngm-duration, 0.45s) ease both;
-    }
+    /*
+     * Keyframe names stay literal in animation-name: Angular scopes @keyframes of a component and rewrites only the
+     * names it finds in animation declarations, never inside a CSS variable (the 1.1.0 'var(--ngm-in)' ran nothing).
+     */
+    :host(.animate) .slide.active,
     :host(.animate) .slide.leaving {
-      animation: var(--ngm-out) var(--ngm-duration, 0.45s) ease both;
+      animation-duration: var(--ngm-duration, 0.45s);
+      animation-timing-function: ease;
+      animation-fill-mode: both;
     }
-    :host([data-animation='fade']) {
-      --ngm-in: ngm-fade-in;
-      --ngm-out: ngm-fade-out;
+    :host(.animate[data-animation='fade']) .slide.active {
+      animation-name: ngm-fade-in;
     }
-    :host([data-animation='slide']) {
-      --ngm-in: ngm-slide-in;
-      --ngm-out: ngm-slide-out;
+    :host(.animate[data-animation='fade']) .slide.leaving,
+    :host(.animate[data-animation='rotate']) .slide.leaving {
+      animation-name: ngm-fade-out;
     }
-    :host([data-animation='rotate']) {
-      --ngm-in: ngm-rotate-in;
-      --ngm-out: ngm-fade-out;
+    :host(.animate[data-animation='slide']) .slide.active {
+      animation-name: ngm-slide-in;
     }
-    :host([data-animation='zoom']) {
-      --ngm-in: ngm-zoom-in;
-      --ngm-out: ngm-zoom-out;
+    :host(.animate[data-animation='slide']) .slide.leaving {
+      animation-name: ngm-slide-out;
+    }
+    :host(.animate[data-animation='rotate']) .slide.active {
+      animation-name: ngm-rotate-in;
+    }
+    :host(.animate[data-animation='zoom']) .slide.active {
+      animation-name: ngm-zoom-in;
+    }
+    :host(.animate[data-animation='zoom']) .slide.leaving {
+      animation-name: ngm-zoom-out;
     }
     :host(.no-motion) .slide {
       animation: none !important;
@@ -276,6 +289,7 @@ import { NgmActionsComponent, NgmBulletsComponent } from './parts.component';
         [class.leaving]="i === leaving()"
         [attr.aria-hidden]="i === index() ? null : 'true'"
         [attr.aria-roledescription]="'slide'"
+        (animationend)="animationDone(i, $event)"
       >
         @if (i === index() || i === leaving() || near(i) || !options().lazyLoading) {
           <ngm-media
@@ -404,6 +418,7 @@ export class NgmGalleryImageComponent {
   private last: number | null = null;
   private swiped = false;
   private timer: ReturnType<typeof setInterval> | null = null;
+  private leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     // The change animation: the old item leaves, the new one enters from the side of the move.
@@ -415,7 +430,7 @@ export class NgmGalleryImageComponent {
           const forward =
             (i > this.last && !(this.last === 0 && i === count - 1)) || (this.last === count - 1 && i === 0);
           this.direction.set(forward ? 1 : -1);
-          this.leaving.set(this.last);
+          this.leave(this.last);
         }
         this.last = i;
         this.playing.set(false);
@@ -439,7 +454,37 @@ export class NgmGalleryImageComponent {
         );
       }
     });
-    inject(DestroyRef).onDestroy(() => this.clearTimer());
+    inject(DestroyRef).onDestroy(() => {
+      this.clearTimer();
+      this.clearLeaveTimer();
+    });
+  }
+
+  /**
+   * The slide that was shown leaves with the change animation, then is hidden. Without motion (reduced motion) it is
+   * hidden at once: otherwise it stayed visible behind a narrower picture of the new slide.
+   */
+  private leave(previous: number): void {
+    this.clearLeaveTimer();
+    if (this.noMotion) {
+      this.leaving.set(null);
+      return;
+    }
+    this.leaving.set(previous);
+    // Fallback when no animationend arrives (hidden tab, element not rendered): longer than the default 0.45 s.
+    this.leaveTimer = setTimeout(() => this.leaving.set(null), LEAVE_FALLBACK_MS);
+  }
+
+  /** The change animation of a slide ended (only the slide itself, not a spinner inside it). */
+  animationDone(i: number, e: AnimationEvent): void {
+    if (e.target !== e.currentTarget || i !== this.leaving()) return;
+    this.clearLeaveTimer();
+    this.leaving.set(null);
+  }
+
+  private clearLeaveTimer(): void {
+    if (this.leaveTimer) clearTimeout(this.leaveTimer);
+    this.leaveTimer = null;
   }
 
   video(item: NgmGalleryItem): boolean {
