@@ -2,7 +2,7 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.1.1 (2026-10-31)
 
 - Fix: the change animation of the stage (`imageAnimation`: fade, slide, rotate, zoom) never ran in an application.
   Angular scopes the `@keyframes` names of a component, and the names were given through CSS variables, which it
