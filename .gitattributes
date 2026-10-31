@@ -1,0 +1,11 @@
+# Store every text file with LF line endings (Prettier endOfLine "lf"), also from Windows.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.mp4 binary
+*.webm binary
+*.woff binary
+*.woff2 binary

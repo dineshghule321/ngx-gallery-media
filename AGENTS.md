@@ -40,4 +40,6 @@ Step by step: `docs/RELEASING.md`.
 ## Commits
 
 Conventional commits, one concern each: `feat(gallery): ...`, `fix(preview): ...`, `docs: ...`, `test: ...`,
-`chore(release): ...`. Never commit `dist/`, `coverage/` or secrets.
+`chore(release): ...`. Never commit `dist/`, `coverage/` or secrets. Commits carry the maintainer's own git identity;
+never Claude or any AI tool as author or committer, and no `Co-Authored-By`, `Claude-Session` or other AI
+attribution lines in commits, pull requests or files. No em or en dashes.
