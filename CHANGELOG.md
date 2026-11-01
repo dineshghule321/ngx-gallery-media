@@ -2,7 +2,7 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 1.2.0 (2026-11-01)
 
 - New option `protectMedia` (default `false`): read-only pictures and videos. No download button in the preview
   (even with `previewDownload`), no save menu (right click, long press) and no dragging out of pictures and videos
