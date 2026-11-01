@@ -102,6 +102,19 @@ describe('NgmGalleryComponent', () => {
     ]);
   });
 
+  it('protects every picture with protectMedia and shows no download in the preview', async () => {
+    host.options.set({ protectMedia: true, previewDownload: true });
+    fixture.detectChanges();
+    const media = Array.from(el().querySelectorAll('ngm-media'));
+    expect(media.length).toBeGreaterThan(1);
+    expect(media.every((m) => m.classList.contains('protected'))).toBeTrue();
+    gallery().openPreview(0);
+    await fixture.whenStable();
+    const preview = document.querySelector('ngm-gallery-preview') as HTMLElement;
+    expect(preview.querySelector('ngm-media.protected')).not.toBeNull();
+    expect(preview.querySelector('[aria-label="Download"]')).toBeNull();
+  });
+
   it('emits change with the item', () => {
     fixture.detectChanges();
     const seen: number[] = [];

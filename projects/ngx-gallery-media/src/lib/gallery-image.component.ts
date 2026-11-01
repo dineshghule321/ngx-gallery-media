@@ -296,6 +296,7 @@ const LEAVE_FALLBACK_MS = 2000;
             [item]="item"
             size="medium"
             [fit]="options().imageSize"
+            [protect]="options().protectMedia"
             [active]="loads(i)"
             [playing]="i === index() && playing()"
             [muted]="options().videoMuted"
