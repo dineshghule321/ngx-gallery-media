@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, provideZonelessChangeDetection, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgmGalleryComponent } from './gallery.component';
+import { resolveLabels } from './helpers';
 import { NgmGalleryItem, NgmGalleryOptions, NgmUrlResolver } from './models';
 import { NgmGalleryPreviewService } from './preview.service';
 import { NgmUrlStore } from './url-store';
@@ -206,6 +207,25 @@ describe('NgmGalleryComponent', () => {
     fixture.detectChanges();
     expect(el().querySelector('ngm-gallery-image video[controls]')).not.toBeNull();
     expect(el().querySelector('ngm-gallery-preview')).toBeNull();
+  });
+
+  it('shows no play button over the message of a video that has no URL (the app cannot show its format)', async () => {
+    host.images.set([
+      { id: 'avi', type: 'video', label: 'Old format' },
+      { id: 'mp4', type: 'video', label: 'Clip' },
+    ]);
+    host.resolver.set((item) => Promise.resolve(item.id === 'avi' ? '' : 'clip.webm'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const stage = () => el().querySelector('ngm-gallery-image') as HTMLElement;
+    expect(stage().querySelector('.play')).toBeNull();
+    expect(stage().textContent).toContain(resolveLabels(null).cannotPlay);
+    gallery().showNext();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(stage().querySelector('.play')).not.toBeNull();
   });
 
   it('shows a counter, a preview button, bullets and the caption when asked', () => {

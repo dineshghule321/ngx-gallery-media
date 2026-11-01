@@ -306,13 +306,13 @@ const LEAVE_FALLBACK_MS = 2000;
             [errorText]="video(item) ? labels().cannotPlay : labels().loadFailed"
             (playState)="videoRunning.set($event)"
             (videoEnded)="videoRunning.set(false)"
-            (failure)="failedAt.set(i)"
+            (failure)="markFailed(i)"
           />
         }
       </div>
     }
     @if (current(); as c) {
-      @if (video(c) && options().videoInlinePlay && failedAt() !== index()) {
+      @if (video(c) && options().videoInlinePlay && !failedItems().has(c)) {
         @if (!playing()) {
           <button
             type="button"
@@ -410,6 +410,8 @@ export class NgmGalleryImageComponent {
   readonly leaving = signal<number | null>(null);
   /** Item whose file failed (no play button over its message). */
   readonly failedAt = signal<number | null>(null);
+  /** Every item whose file failed or has no URL (no play button over their message); new items start clean. */
+  readonly failedItems = signal<ReadonlySet<NgmGalleryItem>>(new Set());
   readonly direction = signal(1);
   readonly current = computed(() => this.items()[this.index()] ?? null);
   readonly counter = computed(() => fill(this.labels().counter, { n: this.index() + 1, total: this.items().length }));
@@ -486,6 +488,13 @@ export class NgmGalleryImageComponent {
   private clearLeaveTimer(): void {
     if (this.leaveTimer) clearTimeout(this.leaveTimer);
     this.leaveTimer = null;
+  }
+
+  /** An item's file failed or has no URL. */
+  markFailed(i: number): void {
+    this.failedAt.set(i);
+    const item = this.items()[i];
+    if (item && !this.failedItems().has(item)) this.failedItems.update((s) => new Set(s).add(item));
   }
 
   video(item: NgmGalleryItem): boolean {
