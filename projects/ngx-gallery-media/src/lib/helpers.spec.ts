@@ -14,6 +14,12 @@ import {
 import { NGM_DEFAULT_OPTIONS } from './models';
 
 describe('resolveOptions', () => {
+  it('never offers a download with protectMedia', () => {
+    expect(resolveOptions({ previewDownload: true }, 1200).previewDownload).toBeTrue();
+    expect(resolveOptions({ previewDownload: true, protectMedia: true }, 1200).previewDownload).toBeFalse();
+    expect(resolveOptions(null, 1200).protectMedia).toBeFalse();
+  });
+
   it('starts from the ngx-gallery defaults', () => {
     const o = resolveOptions(null, 1200);
     expect(o.width).toBe('500px');

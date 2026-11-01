@@ -2,6 +2,13 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- New option `protectMedia` (default `false`): read-only pictures and videos. No download button in the preview
+  (even with `previewDownload`), no save menu (right click, long press) and no dragging out of pictures and videos
+  on the stage, the thumbnails and the preview, and videos without their download and picture-in-picture buttons.
+  Off by default, so existing galleries are unchanged.
+
 ## 1.1.1 (2026-10-31)
 
 - Fix: the change animation of the stage (`imageAnimation`: fade, slide, rotate, zoom) never ran in an application.

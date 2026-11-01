@@ -408,6 +408,21 @@ options = [
 
 Without a handler the browser downloads the `big` URL.
 
+### Read-only pictures and videos
+
+```ts
+options = [{ protectMedia: true }];
+```
+
+Visitors can look at the pictures and videos but get no easy way to save them: no download button in the preview
+(even with `previewDownload: true`), no save menu on a right click or long press, no dragging a picture out, and
+videos without their own download and picture-in-picture buttons. It applies to the stage, the thumbnails and the
+preview.
+
+It cannot stop screenshots, screen recording or the browser's developer tools: whatever a browser shows can be
+copied. For files that must not leave your server, also give the gallery short-lived URLs (see "Signed URLs") and
+keep the download rights on the server.
+
 ### Counter, bullets and a preview button on the stage
 
 ```ts
@@ -670,6 +685,7 @@ Defaults follow ngx-gallery; the differences are marked.
 | `videoMuted`                  | `false`               | Extension. Start muted.                           |
 | `videoLoop`                   | `false`               | Extension. Loop.                                  |
 | `downloadHandler`             |                       | Extension. Your download function.                |
+| `protectMedia`                | `false`               | Extension. Read-only pictures and videos.         |
 | `actions`                     | `[]`                  | Buttons in the preview bar.                       |
 | `arrowPrevIcon` … `playIcon`  |                       | Icon classes (see Custom icons).                  |
 

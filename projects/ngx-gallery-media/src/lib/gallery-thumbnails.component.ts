@@ -238,6 +238,7 @@ interface Thumb {
         [item]="t.item"
         size="small"
         [fit]="options().thumbnailSize"
+        [protect]="options().protectMedia"
         [active]="loads(t)"
         [showSpinner]="false"
         [spinnerIcon]="options().spinnerIcon"

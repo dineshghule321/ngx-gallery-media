@@ -24,7 +24,12 @@ import { NgmUrlStore } from './url-store';
   selector: 'ngm-media',
   imports: [NgmIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'ngm-media' },
+  host: {
+    class: 'ngm-media',
+    '[class.protected]': 'protect()',
+    '(contextmenu)': 'guard($event)',
+    '(dragstart)': 'guard($event)',
+  },
   styles: `
     :host {
       position: relative;
@@ -42,6 +47,12 @@ import { NgmUrlStore } from './url-store';
     }
     video.player {
       background: #000;
+    }
+    :host(.protected) img,
+    :host(.protected) video {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
     .state {
       position: absolute;
@@ -68,6 +79,8 @@ import { NgmUrlStore } from './url-store';
         @if (playing()) {
           <video
             #player
+            [attr.controlslist]="protect() ? 'nodownload noremoteplayback' : null"
+            [attr.disablepictureinpicture]="protect() ? '' : null"
             class="player"
             [src]="u"
             controls
@@ -85,6 +98,7 @@ import { NgmUrlStore } from './url-store';
           ></video>
         } @else if (item().poster) {
           <img
+            [attr.draggable]="protect() ? 'false' : null"
             [src]="item().poster"
             [alt]="alt()"
             [style.object-fit]="fit()"
@@ -93,6 +107,7 @@ import { NgmUrlStore } from './url-store';
           />
         } @else {
           <video
+            [attr.disablepictureinpicture]="protect() ? '' : null"
             [src]="u + '#t=0.5'"
             preload="metadata"
             muted
@@ -154,6 +169,8 @@ export class NgmMediaComponent {
   /** CSS transform of a picture (zoom, rotate, pan). */
   readonly transform = input<string | null>(null);
   readonly transition = input<string | null>(null);
+  /** Read-only (`protectMedia`): no save menu or dragging out, videos without download and picture-in-picture. */
+  readonly protect = input(false);
 
   readonly loaded = output<void>();
   readonly videoEnded = output<void>();
@@ -216,5 +233,12 @@ export class NgmMediaComponent {
   /** Pauses a playing video. */
   pause(): void {
     this.player()?.nativeElement.pause();
+  }
+
+  /** The browser's save menu and dragging out are cancelled on a protected picture or video. */
+  guard(e: Event): void {
+    if (!this.protect()) return;
+    const target = e.target as HTMLElement | null;
+    if (target && /^(IMG|VIDEO)$/.test(target.tagName)) e.preventDefault();
   }
 }

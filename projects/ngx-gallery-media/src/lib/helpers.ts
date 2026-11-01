@@ -29,6 +29,8 @@ export function resolveOptions(
     breakpoint?: number;
   };
   delete merged.breakpoint;
+  // Read-only media never offer a download.
+  if (merged.protectMedia) merged.previewDownload = false;
   return merged;
 }
 

@@ -180,6 +180,13 @@ export interface NgmGalleryOptions {
   videoLoop?: boolean;
   /** Extension: how downloads are done; default a browser download of the `big` URL. */
   downloadHandler?: NgmDownloadHandler;
+  /**
+   * Extension: read-only pictures and videos. No download button in the preview (whatever `previewDownload` says),
+   * no save menu (right click, long press) and no dragging out of a picture or video, and videos without their own
+   * download and picture-in-picture buttons. It stops the easy ways to save, not screenshots or developer tools.
+   * Default false.
+   */
+  protectMedia?: boolean;
 
   /** Icon classes (icon font). Built-in icons are used when left out. */
   arrowPrevIcon?: string;
@@ -305,6 +312,7 @@ export const NGM_DEFAULT_OPTIONS: NgmResolvedOptions = {
   videoInlinePlay: true,
   videoMuted: false,
   videoLoop: false,
+  protectMedia: false,
   actions: [],
 };
 

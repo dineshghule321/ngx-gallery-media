@@ -476,6 +476,14 @@ remove(): void { this.images.update((list) => list.slice(0, -1)); }
   },
   {
     group: 'Extensions',
+    id: 'protect-media',
+    title: 'Read-only pictures and videos',
+    text: 'protectMedia: no download in the preview, no save menu or dragging out, videos without download and picture-in-picture buttons.',
+    images: [image(1, true), VIDEO_MP4, image(2, true)],
+    options: [{ ...w, protectMedia: true, previewDownload: true, previewZoom: true }, phone],
+  },
+  {
+    group: 'Extensions',
     id: 'counter-bullets',
     title: 'Counter, bullets and a preview button',
     text: 'imageCounter, imageBullets and imagePreviewButton on the stage.',

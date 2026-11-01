@@ -385,6 +385,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:n
               [item]="shown"
               size="big"
               fit="contain"
+              [protect]="options().protectMedia"
               [playing]="video(shown)"
               [muted]="options().videoMuted"
               [loop]="options().videoLoop"
@@ -452,7 +453,7 @@ const FOCUSABLE = 'button:not([disabled]), [href], video[controls], [tabindex]:n
             [attr.aria-label]="thumbLabel(i)"
             (click)="show(i)"
           >
-            <ngm-media [item]="t" size="small" [showSpinner]="false" />
+            <ngm-media [item]="t" size="small" [showSpinner]="false" [protect]="options().protectMedia" />
             @if (video(t)) {
               <span class="badge"><ngm-icon name="play" [cssClass]="options().playIcon" /></span>
             }
