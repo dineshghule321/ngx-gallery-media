@@ -204,6 +204,11 @@ export class NgmMediaComponent {
         this.broken.set(false);
       });
     });
+    // No URL for the item (the resolver gave none or failed): reported like a file that failed to load, so the
+    // stage shows no play button over the message.
+    effect(() => {
+      if (this.failed()) untracked(() => this.failure.emit());
+    });
   }
 
   onLoad(): void {

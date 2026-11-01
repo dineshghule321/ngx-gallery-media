@@ -2,6 +2,12 @@
 
 All notable changes to `ngx-gallery-media`. Versions follow [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+- Fix: a video whose file has no URL (the resolver gave none, for example a format the app knows the browser cannot
+  play) showed the play button over its "cannot be played" message. The play button now shows only for a video
+  that can play; the message stays readable.
+
 ## 1.2.0 (2026-11-01)
 
 - New option `protectMedia` (default `false`): read-only pictures and videos. No download button in the preview
